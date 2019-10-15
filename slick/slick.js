@@ -194,7 +194,9 @@
         _.$slideTrack.find('.slick-active').attr({
             'aria-hidden': 'false'
         }).find('a, input, button, select').attr({
-            'tabindex': '0'
+            'tabindex': function resetTabindex() {
+                return $(this).data('tabindex') || '0'
+            }
         });
 
     };
