@@ -62,6 +62,7 @@
                 fade: false,
                 focusOnSelect: false,
                 focusOnChange: false,
+                focusNewOnChange: false,
                 infinite: true,
                 initialSlide: 0,
                 lazyLoad: 'ondemand',
@@ -111,6 +112,7 @@
                 $slideTrack: null,
                 $slides: null,
                 sliding: false,
+                slidingDirection: null,
                 slideOffset: 0,
                 swipeLeft: null,
                 swiping: false,
@@ -1336,7 +1338,7 @@
         _.$slides.add(_.$slideTrack.find('.slick-cloned')).attr({
             'aria-hidden': 'true',
             'tabindex': '-1'
-        }).find('a, input, button, select').attr({
+        }).find('a, input, button, select').attr({ 
             'tabindex': '-1'
         });
 
@@ -1712,11 +1714,9 @@
     };
 
     Slick.prototype.postSlide = function(index) {
-
         var _ = this;
 
         if( !_.unslicked ) {
-
             _.$slider.trigger('afterChange', [_, index]);
 
             _.animating = false;
@@ -1735,12 +1735,24 @@
                 _.initADA();
 
                 if (_.options.focusOnChange) {
-                    var $currentSlide = $(_.$slides.get(_.currentSlide));
-                    $currentSlide.attr('tabindex', 0).focus();
+                    
+                    // focus the current slide (the one with slick-current class)
+                    var $newSlide = $(_.$slides.get(_.currentSlide)); 
+                    if(_.options.focusNewOnChange) { // focus new appearing slide on change
+                        console.log(_.slidingDirection);
+                        if(_.slidingDirection !== 'prev') { // on prev the new appearing is the currentslide - only on next the last new one needs to be focused
+                            $newSlide = $(_.$slides.get(_.currentSlide + _.options.slidesToShow - 1));
+                        } else {
+                            
+                        }
+                        
+                    }
+                    $newSlide.attr('tabindex', 0).focus();
                 }
             }
-
         }
+
+        _.slidingDirection = null;
 
     };
 
@@ -2571,10 +2583,12 @@
 
         _.animating = true;
 
-        _.$slider.trigger('beforeChange', [_, _.currentSlide, animSlide]);
+        var slidingDirection = _.currentSlide > animSlide ? 'prev' : 'next'; // does not work for infinite mode
+        _.$slider.trigger('beforeChange', [_, _.currentSlide, animSlide, slidingDirection]);
 
         oldSlide = _.currentSlide;
         _.currentSlide = animSlide;
+        _.slidingDirection = slidingDirection;
 
         _.setSlideClasses(_.currentSlide);
 
