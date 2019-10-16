@@ -52,7 +52,7 @@
                 centerPadding: '50px',
                 cssEase: 'ease',
                 customPaging: function(slider, i) {
-                    return $('<button type="button" />').html('<span class="slick-visuallyhidden">' + (i + 1) + '</span>');
+                    return $('<button type="button" />').html('<span class="slick-visuallyhidden">' + slider.options.label + ' ' + (i + 1) + '</span>');
                 },
                 dots: false,
                 dotsClass: 'slick-dots',
@@ -65,6 +65,7 @@
                 focusNewOnChange: false,
                 infinite: true,
                 initialSlide: 0,
+                label: 'Slide',
                 lazyLoad: 'ondemand',
                 mobileFirst: false,
                 pauseOnHover: true,
@@ -150,6 +151,14 @@
             dataSettings = $(element).data('slick') || {};
 
             _.options = $.extend({}, _.defaults, settings, dataSettings);
+
+            if(_.options.prevArrow === _.defaults.prevArrow) {
+                _.options.prevArrow = _.options.prevArrow.replace(/Previous/gi, 'Previous ' + _.options.label);
+            }
+
+            if(_.options.nextArrow === _.defaults.nextArrow) {
+                _.options.nextArrow = _.options.nextArrow.replace(/Next/gi, 'Next ' + _.options.label);
+            }
 
             _.currentSlide = _.options.initialSlide;
 
@@ -1366,7 +1375,7 @@
 
                 $(this).find('button').first().attr({
                     'id': 'slick-slide-control' + _.instanceUid + i,
-                    'aria-label': (i + 1) + ' of ' + numDotGroups,
+                    'aria-label': _.options.label + ' ' + (i + 1) + ' of ' + numDotGroups,
                 });
 
             });
