@@ -52,7 +52,7 @@
                 centerPadding: '50px',
                 cssEase: 'ease',
                 customPaging: function(slider, i) {
-                    return $('<button type="button" />').text(i + 1);
+                    return $('<button type="button" />').html('<span class="slick-visuallyhidden">' + (i + 1) + '</span>');
                 },
                 dots: false,
                 dotsClass: 'slick-dots',
@@ -99,6 +99,7 @@
                 currentDirection: 0,
                 currentLeft: null,
                 currentSlide: 0,
+                currentSlideWay: null,
                 direction: 1,
                 $dots: null,
                 listWidth: null,
@@ -709,14 +710,14 @@
             case 'previous':
                 slideOffset = indexOffset === 0 ? _.options.slidesToScroll : _.options.slidesToShow - indexOffset;
                 if (_.slideCount > _.options.slidesToShow) {
-                    _.slideHandler(_.currentSlide - slideOffset, false, dontAnimate);
+                    _.slideHandler(_.currentSlide - slideOffset, false, dontAnimate, 'prev');
                 }
                 break;
 
             case 'next':
                 slideOffset = indexOffset === 0 ? _.options.slidesToScroll : indexOffset;
                 if (_.slideCount > _.options.slidesToShow) {
-                    _.slideHandler(_.currentSlide + slideOffset, false, dontAnimate);
+                    _.slideHandler(_.currentSlide + slideOffset, false, dontAnimate, 'next');
                 }
                 break;
 
@@ -724,7 +725,7 @@
                 var index = event.data.index === 0 ? 0 :
                     event.data.index || $target.index() * _.options.slidesToScroll;
 
-                _.slideHandler(_.checkNavigable(index), false, dontAnimate);
+                _.slideHandler(_.checkNavigable(index), false, dontAnimate, 'index');
                 $target.children().trigger('focus');
                 break;
 
@@ -1347,7 +1348,6 @@
                 var slideControlIndex = tabControlIndexes.indexOf(i);
 
                 $(this).attr({
-                    'role': 'tabpanel',
                     'id': 'slick-slide' + _.instanceUid + i,
                     'tabindex': -1
                 });
@@ -1362,26 +1362,14 @@
                 }
             });
 
-            _.$dots.attr('role', 'tablist').find('li').each(function(i) {
-                var mappedSlideIndex = tabControlIndexes[i];
-
-                $(this).attr({
-                    'role': 'presentation'
-                });
+            _.$dots.find('li').each(function(i) {
 
                 $(this).find('button').first().attr({
-                    'role': 'tab',
                     'id': 'slick-slide-control' + _.instanceUid + i,
-                    'aria-controls': 'slick-slide' + _.instanceUid + mappedSlideIndex,
                     'aria-label': (i + 1) + ' of ' + numDotGroups,
-                    'aria-selected': null,
-                    'tabindex': '-1'
                 });
 
-            }).eq(_.currentSlide).find('button').attr({
-                'aria-selected': 'true',
-                'tabindex': '0'
-            }).end();
+            });
         }
 
         for (var i=_.currentSlide, max=i+_.options.slidesToShow; i < max; i++) {
@@ -1737,17 +1725,18 @@
                 if (_.options.focusOnChange) {
                     
                     // focus the current slide (the one with slick-current class)
-                    var $newSlide = $(_.$slides.get(_.currentSlide)); 
+                    var $newFocusSlide = $(_.$slides.get(_.currentSlide)); 
                     if(_.options.focusNewOnChange) { // focus new appearing slide on change
-                        console.log(_.slidingDirection);
-                        if(_.slidingDirection !== 'prev') { // on prev the new appearing is the currentslide - only on next the last new one needs to be focused
-                            $newSlide = $(_.$slides.get(_.currentSlide + _.options.slidesToShow - 1));
-                        } else {
-                            
+                        
+                         // on prev the new appearing is the currentslide (defauld from above)
+                         // if new currentslide is selected by index (eg dots) then the currentslide should be focused (default from above)
+                         // only on next the last new one needs to be focused
+                        if(_.slidingDirection !== 'prev' && _.currentSlideWay !== 'index') {
+                            $newFocusSlide = $(_.$slides.get(_.currentSlide + _.options.slidesToShow - 1));
                         }
                         
                     }
-                    $newSlide.attr('tabindex', 0).focus();
+                    $newFocusSlide.attr('tabindex', 0).focus();
                 }
             }
         }
@@ -2510,12 +2499,13 @@
 
     };
 
-    Slick.prototype.slideHandler = function(index, sync, dontAnimate) {
+    Slick.prototype.slideHandler = function(index, sync, dontAnimate, slideWay) {
 
         var targetSlide, animSlide, oldSlide, slideLeft, targetLeft = null,
             _ = this, navTarget;
 
         sync = sync || false;
+        slideWay = slideWay || 'index';
 
         if (_.animating === true && _.options.waitForAnimate === true) {
             return;
@@ -2534,6 +2524,7 @@
         slideLeft = _.getLeft(_.currentSlide);
 
         _.currentLeft = _.swipeLeft === null ? slideLeft : _.swipeLeft;
+        _.currentSlideWay = slideWay;
 
         if (_.options.infinite === false && _.options.centerMode === false && (index < 0 || index > _.getDotCount() * _.options.slidesToScroll)) {
             if (_.options.fade === false) {
@@ -2583,12 +2574,11 @@
 
         _.animating = true;
 
-        var slidingDirection = _.currentSlide > animSlide ? 'prev' : 'next'; // does not work for infinite mode
-        _.$slider.trigger('beforeChange', [_, _.currentSlide, animSlide, slidingDirection]);
+        _.slidingDirection = _.currentSlide > animSlide ? 'prev' : 'next'; // does not work for infinite mode
+        _.$slider.trigger('beforeChange', [_, _.currentSlide, animSlide]);
 
         oldSlide = _.currentSlide;
         _.currentSlide = animSlide;
-        _.slidingDirection = slidingDirection;
 
         _.setSlideClasses(_.currentSlide);
 
