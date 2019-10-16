@@ -153,11 +153,11 @@
             _.options = $.extend({}, _.defaults, settings, dataSettings);
 
             if(_.options.prevArrow === _.defaults.prevArrow) {
-                _.options.prevArrow = _.options.prevArrow.replace(/Previous/gi, 'Previous ' + _.options.label);
+                _.options.prevArrow = _.options.prevArrow.replace(/Previous/g, 'Previous ' + _.options.label);
             }
 
             if(_.options.nextArrow === _.defaults.nextArrow) {
-                _.options.nextArrow = _.options.nextArrow.replace(/Next/gi, 'Next ' + _.options.label);
+                _.options.nextArrow = _.options.nextArrow.replace(/Next/g, 'Next ' + _.options.label);
             }
 
             _.currentSlide = _.options.initialSlide;
