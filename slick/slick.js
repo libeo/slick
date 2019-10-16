@@ -1741,7 +1741,7 @@
                          // if new currentslide is selected by index (eg dots) then the currentslide should be focused (default from above)
                          // only on next the last new one needs to be focused
                         if(_.slidingDirection !== 'prev' && _.currentSlideWay !== 'index') {
-                            $newFocusSlide = $(_.$slides.get(_.currentSlide + _.options.slidesToShow - 1));
+                            $newFocusSlide = $(_.$slides.get(_.currentSlide + Math.floor(_.options.slidesToShow) - 1));
                         }
                         
                     }
