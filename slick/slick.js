@@ -103,6 +103,7 @@
                 currentSlideWay: null,
                 direction: 1,
                 $dots: null,
+                isInit: false,
                 listWidth: null,
                 listHeight: null,
                 loadIndex: 0,
@@ -1303,6 +1304,7 @@
     Slick.prototype.init = function(creation) {
 
         var _ = this;
+        _.isInit = true;
 
         if (!$(_.$slider).hasClass('slick-initialized')) {
 
@@ -1335,6 +1337,8 @@
             _.autoPlay();
 
         }
+
+        _.isInit = false;
 
     };
 
@@ -1731,7 +1735,8 @@
             if (_.options.accessibility === true) {
                 _.initADA();
 
-                if (_.options.focusOnChange) {
+                // do  not change focus on initializing / refresh / resize
+                if (_.options.focusOnChange && !_.isInit) {                    
                     
                     // focus the current slide (the one with slick-current class)
                     var $newFocusSlide = $(_.$slides.get(_.currentSlide)); 
@@ -1882,6 +1887,8 @@
 
         _.init();
 
+        _.isInit = true;
+
         if( !initializing ) {
 
             _.changeSlide({
@@ -1892,6 +1899,8 @@
             }, false);
 
         }
+
+        _.isInit = true;
 
     };
 
