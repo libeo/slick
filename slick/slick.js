@@ -44,15 +44,15 @@
                 appendDots: $(element),
                 arrows: true,
                 asNavFor: null,
-                prevArrow: '<button class="slick-prev" aria-label="Previous" type="button"><span class="slick-arrow-label">Previous</span></button>',
-                nextArrow: '<button class="slick-next" aria-label="Next" type="button"><span class="slick-arrow-label">Next</span></button>',
+                prevArrow: '<button class="slick-prev" type="button"><span class="visuallyhidden">Previous</span></button>',
+                nextArrow: '<button class="slick-next" type="button"><span class="visuallyhidden">Next</span></button>',
                 autoplay: false,
                 autoplaySpeed: 3000,
                 centerMode: false,
                 centerPadding: '50px',
                 cssEase: 'ease',
                 customPaging: function(slider, i) {
-                    return $('<button type="button" />').html('<span class="slick-visuallyhidden">' + slider.options.label + ' ' + (i + 1) + '</span>');
+                    return $('<button type="button" />').html('<span class="visuallyhidden">' + slider.options.label + ' ' + (i + 1) + '</span>');
                 },
                 dots: false,
                 dotsClass: 'slick-dots',
@@ -152,14 +152,6 @@
             dataSettings = $(element).data('slick') || {};
 
             _.options = $.extend({}, _.defaults, settings, dataSettings);
-
-            if(_.options.prevArrow === _.defaults.prevArrow) {
-                _.options.prevArrow = _.options.prevArrow.replace(/Previous/g, 'Previous ' + _.options.label);
-            }
-
-            if(_.options.nextArrow === _.defaults.nextArrow) {
-                _.options.nextArrow = _.options.nextArrow.replace(/Next/g, 'Next ' + _.options.label);
-            }
 
             _.currentSlide = _.options.initialSlide;
 

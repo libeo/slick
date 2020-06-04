@@ -94,10 +94,6 @@ $slick-opacity-not-active: 0.25 !default;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
     }
-
-    .slick-arrow-label {
-        @extend .slick-visuallyhidden;
-    }
 }
 
 .slick-prev {
