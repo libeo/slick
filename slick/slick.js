@@ -496,15 +496,20 @@
 
             _.$slider.addClass('slick-dotted');
 
-            dot = $('<ul />').addClass(_.options.dotsClass);
+            dot = $('<ul />').addClass(_.options.dotsClass).attr('role', 'tablist');
 
             for (i = 0; i <= _.getDotCount(); i += 1) {
-                dot.append($('<li />').append(_.options.customPaging.call(this, _, i)));
+                dot.append($('<li />').attr('role', 'tab').append(_.options.customPaging.call(this, _, i)));
             }
 
             _.$dots = dot.appendTo(_.options.appendDots);
 
-            _.$dots.find('li').first().addClass('slick-active');
+            _.$dots
+                .find('li')
+                .first()
+                .addClass('slick-active')
+                .find('button')
+                .attr('aria-current', 'true');
 
         }
 
@@ -1370,8 +1375,7 @@
             _.$dots.find('li').each(function(i) {
 
                 $(this).find('button').first().attr({
-                    'id': 'slick-slide-control' + _.instanceUid + i,
-                    'aria-label': _.options.label + ' ' + (i + 1) + ' of ' + numDotGroups,
+                    'id': 'slick-slide-control' + _.instanceUid + i
                 });
 
             });
@@ -3003,12 +3007,15 @@
             _.$dots
                 .find('li')
                     .removeClass('slick-active')
-                    .end();
+                    .find('button')
+                    .removeAttr('aria-current');
 
             _.$dots
                 .find('li')
                 .eq(Math.floor(_.currentSlide / _.options.slidesToScroll))
-                .addClass('slick-active');
+                .addClass('slick-active')
+                .find('button')
+                .attr('aria-current', 'true');
 
         }
 
