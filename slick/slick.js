@@ -1033,7 +1033,7 @@
             .off('focus.slick blur.slick')
             .on(
                 'focus.slick',
-                '*', 
+                '*',
                 function(event) {
                     var $sf = $(this);
 
@@ -1048,7 +1048,7 @@
                 }
             ).on(
                 'blur.slick',
-                '*', 
+                '*',
                 function(event) {
                     var $sf = $(this);
 
@@ -1351,7 +1351,6 @@
             'aria-hidden': 'true',
             'tabindex': '-1'
         }).find('a, input, button, select').each(function() {
-            console.log(this, $(this).attr('tabindex'), $(this).data('tabindex'));
             $(this).attr('tabindex', '-1');
         })
 
@@ -1734,19 +1733,19 @@
                 _.initADA();
 
                 // do  not change focus on initializing / refresh / resize
-                if (_.options.focusOnChange && !_.isInit) {                    
-                    
+                if (_.options.focusOnChange && !_.isInit) {
+
                     // focus the current slide (the one with slick-current class)
-                    var $newFocusSlide = $(_.$slides.get(_.currentSlide)); 
+                    var $newFocusSlide = $(_.$slides.get(_.currentSlide));
                     if(_.options.focusNewOnChange) { // focus new appearing slide on change
-                        
+
                          // on prev the new appearing is the currentslide (defauld from above)
                          // if new currentslide is selected by index (eg dots) then the currentslide should be focused (default from above)
                          // only on next the last new one needs to be focused
                         if(_.slidingDirection !== 'prev' && _.currentSlideWay !== 'index') {
                             $newFocusSlide = $(_.$slides.get(_.currentSlide + Math.floor(_.options.slidesToShow) - 1));
                         }
-                        
+
                     }
                     $newFocusSlide.attr('tabindex', 0).focus();
                 }
